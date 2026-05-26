@@ -290,3 +290,95 @@ pub fn apply_rules(conn: &mut Connection) -> Result<ApplyReport> {
         still_uncategorized: candidates.len() - categorized,
     })
 }
+
+const CATEGORY_EMOJI: &[(&str, &str)] = &[
+    // Income
+    ("Paychecks", "💵"),
+    ("Interest", "💸"),
+    ("Business Income", "💰"),
+    ("Other Income", "💰"),
+
+    // Gifts & Donations
+    ("Charity", "🎗"),
+    ("Gifts", "🎁"),
+
+    // Auto & Transport
+    ("Auto Payment", "🚗"),
+    ("Public Transit", "🚃"),
+    ("Gas", "⛽️"),
+    ("Auto Maintenance", "🔧"),
+    ("Parking & Tolls", "🏢"),
+    ("Taxi & Ride Shares", "🚕"),
+
+    // Housing
+    ("Mortgage", "🏠"),
+    ("Rent", "🏠"),
+    ("Home Improvement", "🔨"),
+
+    // Bills & Utilities
+    ("Garbage", "🗑"),
+    ("Water", "💧"),
+    ("Gas & Electric", "⚡️"),
+    ("Internet & Cable", "🌐"),
+    ("Phone", "📱"),
+
+    // Food & Dining
+    ("Groceries", "🍏"),
+    ("Restaurants & Bars", "🍽"),
+    ("Coffee Shops", "☕️"),
+
+    // Travel & Lifestyle
+    ("Travel & Vacation", "🏝"),
+    ("Entertainment & Recreation", "🎥"),
+    ("Personal", "👑"),
+    ("Pets", "🐶"),
+    ("Fun Money", "😜"),
+
+    // Shopping
+    ("Shopping", "🛍"),
+    ("Clothing", "👕"),
+    ("Furniture & Housewares", "🪑"),
+    ("Electronics", "🖥"),
+
+    // Children
+    ("Child Care", "👶"),
+    ("Child Activities", "⚽️"),
+
+    // Education
+    ("Student Loans", "🎓"),
+    ("Education", "🏫"),
+
+    // Health & Wellness
+    ("Medical", "💊"),
+    ("Dentist", "🦷"),
+    ("Fitness", "💪"),
+
+    // Financial
+    ("Loan Repayment", "💰"),
+    ("Financial & Legal Services", "🗄"),
+    ("Financial Fees", "🏦"),
+    ("Cash & ATM", "🏧"),
+    ("Insurance", "☂️"),
+    ("Taxes", "🏛️"),
+
+    // Other
+    ("Uncategorized", "❓"),
+    ("Check", "💸"),
+    ("Miscellaneous", "💲"),
+
+    // Business
+    ("Advertising & Promotion", "📣"),
+    ("Business Utilities & Communication", "📞"),
+    ("Employee Wages & Contract Labor", "💵"),
+    ("Business Travel & Meals", "🍴"),
+    ("Business Auto Expenses", "🚖"),
+    ("Business Insurance", "📁"),
+    ("Office Supplies & Expenses", "📎"),
+    ("Office Rent", "🏢"),
+    ("Postage & Shipping", "📦"),
+
+    // Transfers
+    ("Transfer", "🔁"),
+    ("Credit Card Payment", "💳"),
+    ("Balance Adjustments", "⚖️"),
+];
