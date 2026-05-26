@@ -119,6 +119,55 @@ pub fn summary_by_category(conn: &Connection) -> Result<Vec<CategorySummary>> {
     Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
 }
 
+#[derive(Debug, Clone)]
+pub struct MonthSummary {
+    pub ym: String,            // "YYYY-MM"
+    pub income_cents: i64,     // sum of positive amounts
+    pub expense_cents: i64,    // magnitude of negative amounts (positive number)
+}
+
+pub fn summary_by_month(conn: &Connection) -> Result<Vec<MonthSummary>> {
+    let mut stmt = conn.prepare(
+        "SELECT substr(txn_date, 1, 7) AS ym,
+                SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END),
+                SUM(CASE WHEN amount_cents < 0 THEN -amount_cents ELSE 0 END)
+           FROM transactions
+          GROUP BY ym
+          ORDER BY ym ASC",
+    )?;
+    let rows = stmt.query_map([], |row| {
+        Ok(MonthSummary {
+            ym: row.get(0)?,
+            income_cents: row.get(1)?,
+            expense_cents: row.get(2)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+pub fn summary_by_category_for_month(
+    conn: &Connection,
+    ym: &str,
+) -> Result<Vec<CategorySummary>> {
+    let mut stmt = conn.prepare(
+        "SELECT COALESCE(category, '(uncategorized)') AS cat,
+                COUNT(*),
+                SUM(amount_cents)
+           FROM transactions
+          WHERE substr(txn_date, 1, 7) = ?1
+          GROUP BY cat
+          ORDER BY ABS(SUM(amount_cents)) DESC",
+    )?;
+    let rows = stmt.query_map(params![ym], |row| {
+        Ok(CategorySummary {
+            category: row.get(0)?,
+            count: row.get(1)?,
+            total_cents: row.get(2)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
 // Insert one transaction. Returns true if the row was new, false if a
 // row with the same fingerprint already existed (i.e. it was a duplicate).
 //
