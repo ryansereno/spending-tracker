@@ -45,6 +45,64 @@ pub fn open(path: &str) -> Result<Connection> {
     Ok(conn)
 }
 
+// Read-side row shape. We keep dates as `String` (already 'YYYY-MM-DD' in
+// the DB) so the frontend can use them as-is — no chrono dependency leaks
+// into the TUI/API layer just for display.
+#[derive(Debug, Clone)]
+pub struct TransactionRow {
+    pub id: i64,
+    pub source: String,
+    pub txn_date: String,
+    pub description: String,
+    pub amount_cents: i64,
+    pub category: Option<String>,
+}
+
+pub fn list_transactions(conn: &Connection) -> Result<Vec<TransactionRow>> {
+    let mut stmt = conn.prepare(
+        "SELECT id, source, txn_date, description, amount_cents, category
+           FROM transactions
+          ORDER BY txn_date DESC, id DESC",
+    )?;
+    let rows = stmt.query_map([], |row| {
+        Ok(TransactionRow {
+            id: row.get(0)?,
+            source: row.get(1)?,
+            txn_date: row.get(2)?,
+            description: row.get(3)?,
+            amount_cents: row.get(4)?,
+            category: row.get(5)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
+#[derive(Debug, Clone)]
+pub struct CategorySummary {
+    pub category: String, // '(uncategorized)' for NULL — done in SQL via COALESCE
+    pub count: i64,
+    pub total_cents: i64,
+}
+
+pub fn summary_by_category(conn: &Connection) -> Result<Vec<CategorySummary>> {
+    let mut stmt = conn.prepare(
+        "SELECT COALESCE(category, '(uncategorized)') AS cat,
+                COUNT(*),
+                SUM(amount_cents)
+           FROM transactions
+          GROUP BY cat
+          ORDER BY ABS(SUM(amount_cents)) DESC",
+    )?;
+    let rows = stmt.query_map([], |row| {
+        Ok(CategorySummary {
+            category: row.get(0)?,
+            count: row.get(1)?,
+            total_cents: row.get(2)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
 // Insert one transaction. Returns true if the row was new, false if a
 // row with the same fingerprint already existed (i.e. it was a duplicate).
 //

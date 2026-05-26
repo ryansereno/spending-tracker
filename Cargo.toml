@@ -12,3 +12,5 @@ anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 sha2 = "0.10"
 hex = "0.4"
+ratatui = "0.29"     # TUI framework — widgets, layout, render loop
+crossterm = "0.28"   # cross-platform terminal I/O (raw mode, key events, alt screen)
