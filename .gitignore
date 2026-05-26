@@ -1,0 +1,4 @@
+/target
+/finance.db
+/finance.db-journal
+.DS_Store
