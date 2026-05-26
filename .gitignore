@@ -2,3 +2,4 @@
 /finance.db
 /finance.db-journal
 .DS_Store
+.claude/

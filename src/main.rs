@@ -1,15 +1,13 @@
-// Binary entrypoint. The `mod` declarations below tell the compiler to
-// pull in src/db.rs, src/csv_import.rs, src/model.rs as child modules.
-
-mod categorize;
-mod csv_import;
-mod db;
-mod model;
+// CLI binary. The actual logic lives in the library (src/lib.rs and its
+// submodules); this file is just argv parsing + dispatch to library calls.
+// A future TUI binary or axum server will look the same shape: a thin
+// shell over the same library.
 
 use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+use finance_tracker_api::{categorize, csv_import, db};
 
 // clap's `derive` API turns this struct into a CLI parser.
 // `#[command(...)]` adds metadata you see in --help.
