@@ -1,5 +1,7 @@
 Bank and Credit Card transaction tracker.
+
 An attempt to clone the Monarch/ Mint finance tracking dashboard, in a simpler TUI app.
+
 Import data via bank .csv export
 
 ## Usage
