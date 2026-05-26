@@ -25,7 +25,7 @@ cargo run --bin tui -- /path/to/other.db
 
 ### Categorizing
 
-Seed categories from a Monarch .csv export 
+Seed categories from a Monarch .csv export (optional)
 ```bash
 cargo run -- seed-monarch <monarch_export.csv>
 ```
