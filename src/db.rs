@@ -84,6 +84,22 @@ pub struct CategorySummary {
     pub total_cents: i64,
 }
 
+// Union of categories ever seen — used to populate the TUI's autocomplete
+// picker. Pulls from both already-categorized transactions and rules so a
+// brand-new rule-only category shows up before any rows have been assigned.
+pub fn list_categories(conn: &Connection) -> Result<Vec<String>> {
+    let mut stmt = conn.prepare(
+        "SELECT DISTINCT category FROM (
+             SELECT category FROM transactions WHERE category IS NOT NULL
+             UNION
+             SELECT category FROM merchant_rules
+         )
+         ORDER BY category",
+    )?;
+    let rows = stmt.query_map([], |row| row.get::<_, String>(0))?;
+    Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+}
+
 pub fn summary_by_category(conn: &Connection) -> Result<Vec<CategorySummary>> {
     let mut stmt = conn.prepare(
         "SELECT COALESCE(category, '(uncategorized)') AS cat,
