@@ -6,23 +6,17 @@ Import data via bank .csv export
 
 ## Usage
 
-### Import
-
 ```bash
 cargo build
 ```
 
+### Import transactions
+
+Download a .csv from your bank
+Then import:
 ```bash
 cargo run -- import --source wells <file.csv>
 cargo run -- import --source amex  <file.csv>
-```
-
-### Run TUI app
-
-```bash
-cargo run --bin tui
-# or against a different DB:
-cargo run --bin tui -- /path/to/other.db
 ```
 
 ### Categorizing
@@ -45,4 +39,12 @@ cargo run -- categorize-txn <id> "<category>"
 Add a merchant rule (and apply it immediately)
 ```bash
 cargo run -- rule add "<pattern>" "<category>"
+```
+
+### Run TUI app
+
+```bash
+cargo run --bin tui
+# or against a different DB:
+cargo run --bin tui -- /path/to/other.db
 ```
