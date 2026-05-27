@@ -13,6 +13,7 @@ cargo build
 ### Import transactions
 
 Download a .csv from your bank
+
 Then import:
 ```bash
 cargo run -- import --source wells <file.csv>
