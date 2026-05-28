@@ -22,7 +22,8 @@ cargo run -- import --source amex  <file.csv>
 
 ### Categorizing
 
-Seed categories from a Monarch .csv export (optional)
+(optional) To avoid having to hand-categorize your first batch of transactions, I recommend that you seed your categories from a Monarch .csv export, or any other Plaid-based finance app that provides clean mappings from "rough merchant name" -> "Clean Category". Monarch Finance provides a 7-day free trial to do this.
+
 ```bash
 cargo run -- seed-monarch <monarch_export.csv>
 ```
